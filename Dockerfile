@@ -6,12 +6,12 @@ WORKDIR /go/src/github.com/jupl/go-starter
 ADD . .
 RUN go generate ./...
 RUN dep ensure
-ARG BIN
-RUN go install ./cmd/$BIN
+ARG PACKAGE
+RUN go install ./cmd/$PACKAGE
 
 FROM alpine
 RUN apk --no-cache add ca-certificates
-ARG BIN
+ARG PACKAGE
 WORKDIR /app
-COPY --from=build /go/bin/$BIN ./start
-ENTRYPOINT ["./start"]
+COPY --from=build /go/bin/$PACKAGE ./package
+ENTRYPOINT ["./package"]
