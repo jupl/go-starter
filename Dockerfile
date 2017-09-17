@@ -1,21 +1,18 @@
 # Set up
 FROM golang:alpine AS base
-RUN apk add --no-cache git
-RUN go get -u github.com/golang/dep/cmd/dep
-RUN go get -u github.com/jteeuwen/go-bindata/...
+RUN apk add --no-cache git make
 WORKDIR /go/src/github.com/jupl/go-starter
 ADD . .
-RUN go generate ./...
-RUN dep ensure
+RUN make
 
 # Run tests
 FROM base AS test
-RUN go test -cover ./...
+RUN make test
 
 # Build binary
 FROM base AS build
 ARG PACKAGE
-RUN go install ./cmd/$PACKAGE
+RUN make install PACKAGE=$PACKAGE
 
 # Final destination
 FROM alpine AS release
