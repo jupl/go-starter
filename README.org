@@ -18,3 +18,9 @@ A =Dockerfile= is included to build [[https://www.docker.com/][Docker]] images. 
 #+BEGIN_EXAMPLE
 docker build --build-arg PACKAGE=app -t app .
 #+END_EXAMPLE
+
+To run tests only:
+
+#+BEGIN_EXAMPLE
+docker build --target test -t test .
+#+END_EXAMPLE
