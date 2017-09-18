@@ -1,60 +1,74 @@
+MAKEFLAGS+=--no-builtin-rules
+
 # Overridable options
 PACKAGE?=...
 GO?=go
 
 # Go related variables
-goget=$(GO) get
-gopath=$(shell $(GO) env GOPATH)
-gobin=$(gopath)/bin
-goacc=$(gobin)/go-acc
-gobindata=$(gobin)/go-bindata
-godep=$(gobin)/dep
+go_get=$(GO) get
+go_bin=$(shell $(GO) env GOPATH)/bin
+goacc=$(go_bin)/go-acc
+bindata=$(go_bin)/go-bindata
+dep=$(go_bin)/dep
 
 # Search for relevant files
 # https://stackoverflow.com/a/18258352
 # https://stackoverflow.com/a/12324443
-rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
-exclude=$(foreach v,$(2),$(if $(findstring $(1),$(v)),,$(v)))
-go_files=$(call exclude,vendor/,$(call rwildcard,,*.go))
-src_files=$(call exclude,_test.go,$(go_files))
+rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $2,$d))
+files:=$(filter-out vendor/%,$(call rwildcard,,%.go))
+go_files:=$(filter-out %/bindata.go,$(files))
+src_files:=$(filter-out %_test.go,$(files))
+generate_files:=$(patsubst %/assets,%/bindata.go,$(filter %/assets,$(call rwildcard,,%)))
 
-.PHONY: setup install clean format htmlcov test generate
+.PHONY: setup install clean format htmlcov test
+.SUFFIXES:
 
 #
 # Tasks
 #
-setup: generate vendor
-install: setup $(src_files)
+setup: $(generate_files) vendor
+install: $(src_files) | setup
+	@printf '%s ' '==>'
 	$(GO) install ./cmd/$(PACKAGE)
 
 #
 # Development
 #
 clean:
+	@printf '%s ' '==>'
 	rm -f coverage.out
 format: $(go_files)
+	@printf '%s ' '==>'
 	$(GO) fmt ./...
-coverage.out: setup $(go_files) $(goacc)
-	$(goacc) -o coverage.out ./...
 htmlcov: coverage.out
+	@printf '%s ' '==>'
 	$(GO) tool cover -html=coverage.out
-test: setup $(go_files)
+test: $(go_files) | setup
+	@printf '%s ' '==>'
 	$(GO) test -cover ./...
 
 #
-# Project dependencies
+# Files
 #
-generate: $(gobindata)
-	$(GO) generate ./...
-vendor: Gopkg.toml Gopkg.lock $(go_files) $(godep)
-	$(godep) ensure
+%/bindata.go: %/assets %/assets/* %/assets/*/* | $(bindata)
+	@printf '%s ' '==>'
+	$(GO) generate -x ./$(patsubst %/assets,%,$<)
+coverage.out: $(files) | setup $(goacc)
+	@printf '%s ' '==>'
+	$(goacc) -o $@ ./...
+vendor: Gopkg.toml Gopkg.lock $(go_files) | $(dep)
+	@printf '%s ' '==>'
+	$(dep) ensure
 
 #
 # Go bin dependencies
 #
 $(goacc):
-	$(goget) github.com/ory/go-acc
-$(gobindata):
-	$(goget) github.com/jteeuwen/go-bindata/...
-$(godep):
-	$(goget) github.com/golang/dep/cmd/dep
+	@printf '%s ' '==>'
+	$(go_get) github.com/ory/go-acc
+$(bindata):
+	@printf '%s ' '==>'
+	$(go_get) github.com/jteeuwen/go-bindata/...
+$(dep):
+	@printf '%s ' '==>'
+	$(go_get) github.com/golang/dep/cmd/dep
