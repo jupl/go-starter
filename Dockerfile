@@ -3,7 +3,7 @@ FROM golang:alpine AS base
 RUN apk add --no-cache git make
 WORKDIR /go/src/github.com/jupl/go-starter
 ADD . .
-RUN make
+RUN make setup
 
 # Run tests
 FROM base AS test

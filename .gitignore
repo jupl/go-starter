@@ -1,3 +1,4 @@
+# Remove to include generated bindata.go to VCS
 bindata.go
 
 # Created by https://www.gitignore.io/api/go

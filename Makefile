@@ -26,26 +26,26 @@ generate_files:=$(patsubst %/assets,%/bindata.go,$(filter %/assets,$(call rwildc
 #
 # Tasks
 #
-setup: $(generate_files) vendor
-install: $(src_files) | setup
+help: # https://blog.sneawo.com/blog/2017/06/13/makefile-help-target/
+	@egrep '^(.+)\:\ .*##\ (.+)' ${MAKEFILE_LIST} | sed 's/:.*##/#/' | column -t -c 2 -s '#'
+setup: $(generate_files) vendor ## Set up project
+install: $(src_files) | setup ## Install application
 	@printf '%s ' '==>'
 	$(GO) install ./cmd/$(PACKAGE)
 
 #
 # Development
 #
-clean:
+clean: ## Clean up files
 	@printf '%s ' '==>'
 	rm -f coverage.out
-format: $(go_files)
+format: $(go_files) ## Format all go files
 	@printf '%s ' '==>'
 	$(GO) fmt ./...
-htmlcov: coverage.out
+htmlcov: coverage.out ## Generate HTML coverage report
 	@printf '%s ' '==>'
 	$(GO) tool cover -html=coverage.out
-test: $(go_files) | setup
-	@printf '%s ' '==>'
-	$(GO) test -cover ./...
+test: coverage.out ## Run all tests with code coverage
 
 #
 # Files
