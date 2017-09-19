@@ -59,9 +59,9 @@ clean: ## Clean up files
 format: $(source_files) $(test_files) ## Format all go files
 	@printf '==> '
 	$(GO) fmt $(call package_from_file,$?)
-htmlcov: coverage.out ## Generate HTML coverage report
+htmlcov: setup coverage.out ## Generate HTML coverage report
 	@printf '==> '
-	$(GO) tool cover -html=$<
+	$(GO) tool cover -html=coverage.out
 test: setup coverage.out ## Run all tests with code coverage
 
 #
