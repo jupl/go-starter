@@ -94,7 +94,7 @@ bindata.go %/bindata.go: $$(call assets_from_bindata,$$@) | $(bindata)
 coverage.out: $(source_files) $(test_files) | $(goacc)
 	@printf '==> '
 	$(goacc) -o $@ $(call package_path_from_file,$(filter %_test.go,$^))
-vendor: $(source_files) $(test_files) $(proto_files) | $(dep)
+vendor: Gopkg.toml Gopkg.lock $(source_files) $(test_files) $(proto_files) | $(dep)
 	@printf '==> '
 	$(dep) ensure
 
