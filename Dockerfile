@@ -12,7 +12,7 @@ RUN make test
 # Build binary
 FROM base AS build
 ARG PACKAGE
-RUN make install PACKAGE=$PACKAGE
+RUN make install PACKAGE=./cmd/$PACKAGE
 
 # Final destination
 FROM alpine AS release
