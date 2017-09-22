@@ -17,7 +17,7 @@ RUN make install PACKAGE=./cmd/$PACKAGE
 # Final destination
 FROM alpine AS release
 RUN apk --no-cache add ca-certificates
-ARG PACKAGE
 WORKDIR /app
+ARG PACKAGE
 COPY --from=build /go/bin/$PACKAGE ./package
 ENTRYPOINT ["./package"]
