@@ -66,6 +66,12 @@ help: # https://blog.sneawo.com/blog/2017/06/13/makefile-help-target/
 	@egrep '^(.+)\:\ .*##\ (.+)' ${MAKEFILE_LIST}\
 	| sed 's/:.*##/#/'\
 	| column -t -c 2 -s '#'
+	@echo
+	@echo 'Variables:'
+	@echo '  PACKAGE - Packages affected (default: ./...)'
+	@echo '   ASSETS - Directory name to check for go-bindata (default: assets)'
+	@echo '       GO - Go executable to override (default: go)'
+	@echo
 setup: $(assets_files) $(proto_files) vendor ## Set up project
 install: $(bin_files) ## Install application
 clean: ## Clean up files

@@ -2,24 +2,15 @@
 Personal boilerplate starter.
 
 
-** TODO About
-
-
-** TODO Project structure
-
-
-** go-bindata
-Use [[https://github.com/jteeuwen/go-bindata][go-bindata]] to bundle static assets. A file =bindata.go= is automatically generated next to directories called =assets/=.
-
-
-** TODO GRPC
-
-
-** TODO Make
+** Make
+To see which commands are available simply run ~make~. With the provided =Makefile= the following is available:
+- Check for file changes when running commands.
+- A file =bindata.go= is automatically generated next to directories called =assets/= using [[https://github.com/jteeuwen/go-bindata][go-bindata]].
+- Any =.proto= files are automatically generated using [[https://github.com/google/protobuf][protobuf]].
 
 
 ** Docker
-A =Dockerfile= is included to build [[https://www.docker.com/][Docker]] images. Use =PACKAGE= argument to specify which binary to build. Example:
+A =Dockerfile= is included to build [[https://www.docker.com/][Docker]] images. Make sure to change ~WORKDIR~. Use =PACKAGE= argument to specify which binary to build. Example:
 
 #+BEGIN_EXAMPLE
 docker build --build-arg PACKAGE=app -t app .
