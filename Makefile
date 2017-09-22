@@ -7,7 +7,6 @@ ASSETS=assets
 
 # Functions
 # https://stackoverflow.com/a/18258352
-# https://stackoverflow.com/a/12324443
 rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $2,$d))
 dir_from_file=$(notdir $(patsubst %/,%,$(dir $(abspath $1))))
 package_path_from_file=$(patsubst %/,./%,$(sort $(dir $1)))
