@@ -85,26 +85,6 @@ htmlcov: setup coverage.out ## Generate HTML coverage report
 test: setup coverage.out ## Run all tests with code coverage
 
 #
-# Files
-#
-.SECONDEXPANSION:
-$(go_bin)/%: $$(call files_from_package,$$(call package_from_bin,$$@),.GoFiles)
-	@printf '==> '
-	$(GO) install $(call package_from_bin,$@)
-bindata.go %/bindata.go: $$(call assets_from_bindata,$$@) | $(bindata)
-	@printf '==> '
-	cd $(dir $@); go-bindata -pkg $(call dir_from_file,$@) $(ASSETS)
-%.pb.go: %.proto | $(protoc)
-	@printf '==> '
-	protoc --go_out=plugins=grpc,import_path=$(call dir_from_file,$@):. $?
-coverage.out: $(source_files) $(test_files) | $(goacc)
-	@printf '==> '
-	$(goacc) -o $@ $(call package_path_from_file,$(filter %_test.go,$^))
-vendor: Gopkg.toml Gopkg.lock $(source_files) $(test_files) $(proto_files) | $(dep)
-	@printf '==> '
-	$(dep) ensure
-
-#
 # Go bin dependencies
 #
 $(goacc):
@@ -119,3 +99,23 @@ $(dep):
 $(protoc):
 	@printf '==> '
 	$(go_get) github.com/golang/protobuf/protoc-gen-go
+
+#
+# Files
+#
+coverage.out: $(source_files) $(test_files) | $(goacc)
+	@printf '==> '
+	$(goacc) -o $@ $(call package_path_from_file,$(filter %_test.go,$^))
+vendor: Gopkg.toml Gopkg.lock $(source_files) $(test_files) $(proto_files) | $(dep)
+	@printf '==> '
+	$(dep) ensure
+%.pb.go: %.proto | $(protoc)
+	@printf '==> '
+	protoc --go_out=plugins=grpc,import_path=$(call dir_from_file,$@):. $?
+.SECONDEXPANSION:
+$(go_bin)/%: $$(call files_from_package,$$(call package_from_bin,$$@),.GoFiles)
+	@printf '==> '
+	$(GO) install $(call package_from_bin,$@)
+bindata.go %/bindata.go: $$(call assets_from_bindata,$$@) | $(bindata)
+	@printf '==> '
+	cd $(dir $@); go-bindata -pkg $(call dir_from_file,$@) $(ASSETS)
