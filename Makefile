@@ -36,6 +36,7 @@ base_path:=$(CURDIR:$(go_path)/src/%=%)
 bindata:=$(go_bin)/go-bindata
 dep:=$(go_bin)/dep
 goacc:=$(go_bin)/go-acc
+protoc:=$(go_bin)/protoc-gen-go
 
 # Determine go files
 packages:=$(call find_packages,$(PACKAGE))
