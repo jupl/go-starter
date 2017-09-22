@@ -47,7 +47,7 @@ bin_files:=\
 assets_files:=\
 	$(patsubst %/assets.go,%/bindata.go, \
 	$(foreach a, \
-	$(filter %/assets.go, $(source_files)), \
+	$(filter %/assets.go,$(source_files)), \
 	$(if $(call rwildcard,$(patsubst %.go,%/,$a),%),$a,)))
 
 .PHONY: help setup install clean format htmlcov test
