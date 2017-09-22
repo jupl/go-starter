@@ -30,10 +30,10 @@ find_packages=\
 go_get:=$(GO) get
 go_path:=$(shell $(GO) env GOPATH)
 go_bin:=$(go_path)/bin
-goacc:=$(go_bin)/go-acc
+base_path:=$(CURDIR:$(go_path)/src/%=%)
 bindata:=$(go_bin)/go-bindata
 dep:=$(go_bin)/dep
-base_path:=$(CURDIR:$(go_path)/src/%=%)
+goacc:=$(go_bin)/go-acc
 
 # Determine go files
 packages:=$(call find_packages,$(PACKAGE))
@@ -45,10 +45,9 @@ bin_files:=\
 	$(filter $(go_bin)/%, \
 	$(shell $(GO) list -f '{{.Target}}' $(packages)))
 assets_files:=\
-	$(patsubst %assets.go,%bindata.go, \
+	$(patsubst %/assets.go,%/bindata.go, \
 	$(foreach a, \
-		$(filter-out vendor/%, \
-		$(call rwildcard,,assets.go %/assets.go)), \
+	$(filter %/assets.go, $(source_files)), \
 	$(if $(call rwildcard,$(patsubst %.go,%/,$a),%),$a,)))
 
 .PHONY: help setup install clean format htmlcov test
